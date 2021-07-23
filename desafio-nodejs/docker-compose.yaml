@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+    nginx:
+        build:
+            dockerfile: ./nginx/Dockerfile
+            context: .
+        image: jonathanmdr/nginx-proxy
+        container_name: nginx-proxy
+        ports:
+            - "80:80"
+        networks:
+            - challenge
+        depends_on: 
+            - "app"
+    
+    app:
+        build:
+            dockerfile: ./app/Dockerfile
+            context: .
+        image: jonathanmdr/app-node
+        container_name: app-node
+        entrypoint: dockerize -wait tcp://mysql-challenge:3306 -timeout 20s node index.js
+        networks:
+            - challenge
+        depends_on:
+            - "mysql"
+
+    mysql:
+        image: mysql
+        container_name: mysql-challenge
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=challenge
+        volumes:
+            - 'data:/var/lib/mysql'
+        networks:
+            - challenge
+
+volumes:
+    data:
+        driver: local
+
+networks:
+    challenge:
+        driver: bridge
