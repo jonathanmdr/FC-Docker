@@ -26,7 +26,13 @@ async function selectPeoples() {
 }
 
 migration()
-.then(result => console.log("Migration applied"))
-.catch(err => console.error("Failed to execute database migration"));
+.then(result => {
+    console.log("Migration applied");
+
+    insertPeople()
+    .then(result => console.log("Insert applied"))
+    .catch(error => console.error("Failed to execute insert in database"));
+})
+.catch(error => console.error("Failed to execute database migration"));
  
 module.exports = {insertPeople, selectPeoples}

@@ -4,10 +4,6 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
-db.insertPeople()
-.then(result => console.log("Insert applied"))
-.catch(err => console.error("Failed to execute insert in database"));
-
 app.get("/", (req, res) => {
     db.selectPeoples()
     .then(result => {
